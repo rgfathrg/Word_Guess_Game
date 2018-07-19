@@ -2,6 +2,7 @@ var wins = 0;
 var losses = 0;
 var place;
 var replaceArr = [];
+var guessCorrect = false;
 
 var futbolWords = ["goal", "pitch", "cleats", "supporters", "keeper", "striker", "ball", "midfielder"];
 var guessAttempts = [];
@@ -17,10 +18,11 @@ var attemptsLeft = holdWord.length;
 
 //* This is to replace each letter of the random word with "_"
 function replace() {
-  for (var i = 0; i < holdWord.length; i++) {
-    replaceArr = replaceArr + holdWord[i].replace(holdWord[i], "_");
-    document.querySelector("#random-word").innerHTML = replaceArr;
-  }return replaceArr;
+  replaceArr = Array(holdWord.length);
+  replaceArr.fill("_");
+ 
+  document.querySelector("#random-word").innerHTML = replaceArr.join("");
+  return replaceArr;
 }
 replace();
 
@@ -31,37 +33,35 @@ document.onkeyup = function(event) {
   
   //* Function to check the letter against the random word
   function check() {
+    guessCorrect = false;
     for (var j = 0; j < holdWord.length; j++) {
       if (userGuess === holdWord[j]) {
-        place = holdWord.indexOf(holdWord[j]);
-        return true;
+        //place = holdWord.indexOf(holdWord[j], j);
+        replaceArr[j] = holdWord[j];
+        document.querySelector("#random-word").innerHTML = replaceArr.join("");
+        guessCorrect = true;
       }
-      /*else {
-        return false; 
-      }*/
-    }return false;
-  }
-  var check = check();
-    
-//* To determine find the matching index position in the replaced array and replace with the correct letter
-    if (check === true) {
-      for (var k = 0; k < replaceArr.length; k++) {
-        if (replaceArr.indexOf(replaceArr[k]) === place) {
-           console.log(replaceArr.indexOf(replaceArr[k]));
-        }
-      }
-      /*function show() {
-            for (var k = 0; k < replaceArr.length; k++) {
-                if (replaceArr.indexOf(k) === place) {
-                  var showA = replaceArr.indexOf(k);
-                  console.log(showA);
-                  document.querySelector("#random-word").innerHTML = showA;
-                }
-            } return showA; 
-        }
-        show();*/
+      
     }
-    if (check === false) {
+
+    if (replaceArr.indexOf("_") < 0) {
+      return true;
+    }
+
+   return false; 
+ } 
+  var won = check();
+    
+
+    if (won === true) {
+      wins++;
+      holdWord = compWord();
+      guessAttempts = [];
+      attemptsLeft = holdWord.length;
+      replaceArr = [];
+      replace();
+    }
+    if (!guessCorrect) {
           guessAttempts = guessAttempts + event.key + ",";
           attemptsLeft = attemptsLeft - 1;
     }
